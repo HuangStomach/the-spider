@@ -1,5 +1,4 @@
 <?php
-use Phalcon\Mvc\Micro;
 
 class Server {
     protected $server;
@@ -8,27 +7,35 @@ class Server {
     public function __construct () {
         $this->server = new swoole_http_server('0.0.0.0', 9501);
         $this->server->set([
-            'worker_num' => 4, // worker process num
+            'task_worker_num' => 4, // worker process num
             'backlog' => 128, // listen backlog
             // 'max_request' => 50,
             'dispatch_mode' => 1
         ]);
         $this->server->on('Request', [$this, 'request']);
-        $this->server->on('WorkerStart', [$this, 'worker']);
+        $this->server->on('task', [$this, 'task']);
+        $this->server->on('task', [$this, 'task']);
+        $this->server->on('finish', [$this, 'finish']);
+        
+		define('APP_PATH', dirname(__FILE__) . '/' );
     }
 
     public function request ($req, $res) {
-        echo "request \n";
-        $this->app->get('/wa', function () use ($res) {
-            echo "isIn! \n";
-            $res->end('wow');
-        });
-        $this->app->handle($req->server['request_uri']);
+        $this->server->req = $req;
+        $task = $this->server->task([$req, $res]);
     }
 
-    public function worker ($server, $id) {
-        echo "workerstart \n";
-        $this->app = new Micro();
+    public function task ($server, $task, $from, $data) {
+        require_once(APP_PATH . 'lib/dispatcher.php');
+
+        $dispatcher = new Dispatcher($data);
+        $dispatcher->dispatch();
+        // $server->finish("OK");
+    }
+
+    public function finish ($server, $task, $data) {
+        // echo print_r($server, true);
+        // echo print_r($data, true);
     }
 
     public function run () {
