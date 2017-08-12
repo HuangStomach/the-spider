@@ -7,30 +7,52 @@ class Server {
     public function __construct () {
         $this->server = new swoole_http_server('0.0.0.0', 9501);
         $this->server->set([
-            'task_worker_num' => 4, // worker process num
+            'worker_num' => 4, // worker process num
             'backlog' => 128, // listen backlog
-            // 'max_request' => 50,
+            'max_request' => 50,
             'dispatch_mode' => 1
         ]);
-        $this->server->on('Request', [$this, 'request']);
-        $this->server->on('task', [$this, 'task']);
-        $this->server->on('task', [$this, 'task']);
+        $this->server->on('request', [$this, 'request']);
+        $this->server->on('workerStart', [$this, 'workerStart']);
         $this->server->on('finish', [$this, 'finish']);
-        
+
 		define('APP_PATH', dirname(__FILE__) . '/' );
     }
 
     public function request ($req, $res) {
-        $this->server->req = $req;
-        $task = $this->server->task([$req, $res]);
+        $spider = $this->server->spider;
+        $spider->router->add('/:controller/:params', [
+            'controller' => 1,
+            'params' => 2,
+            'action' => $req->server['request_method']
+        ]);
+
+        // 按照swoole的参数传递来植入phalcon参数
+        $method = $req->server['request_method'];
+        $_SERVER['REQUEST_METHOD'] = $method;
+        switch ($method) {
+            case 'GET':
+                $_GET = $_REQUEST = $req->get;
+                break;
+            case 'POST':
+            case 'PATCH':
+            case 'DELETE':
+                $_POST = $_REQUEST = $req->post;
+                break;
+            case 'PUT':
+                $_PUT = $_REQUEST = $req->post;
+                break;
+        }
+
+        $content = $spider->handle($req->server['request_uri'])->getContent();
+        $res->end($content);
     }
 
-    public function task ($server, $task, $from, $data) {
-        require_once(APP_PATH . 'lib/dispatcher.php');
+    public function workerStart ($server, $work) {
+        require_once(APP_PATH . 'lib/Spider.php');
 
-        $dispatcher = new Dispatcher($data);
-        $dispatcher->dispatch();
-        // $server->finish("OK");
+        $server->spider = new Spider();
+        $server->spider->init();
     }
 
     public function finish ($server, $task, $data) {
