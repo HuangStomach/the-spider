@@ -7,6 +7,7 @@ use Phalcon\Http\Response;
 use Phalcon\Http\Request;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Config\Adapter\Ini as ConfigIni;
+use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
 use Phalcon\Mvc\Application as BaseApplication;
 use Phalcon\Mvc\Router\Annotations as Annotations;
 
@@ -14,7 +15,7 @@ class Spider extends BaseApplication {
 
     public function init () {
         $this->services();
-        $config = new ConfigIni(APP_PATH . 'config/application.ini');
+        $config = new ConfigIni(CONFIG_PATH . 'application.ini');
         $loader = new Loader();
         $loader->registerDirs([
             APP_PATH . $config->application->controller,
@@ -44,9 +45,18 @@ class Spider extends BaseApplication {
         // 注册一个view吧虽然用不到
         $di->set('view', function () {
             $view = new View();
-            $config = new ConfigIni(APP_PATH . 'config/application.ini');
+            $config = new ConfigIni(CONFIG_PATH . 'application.ini');
             $view->setViewsDir(APP_PATH . $config->application->view);
             return $view;
+        });
+
+        $di->set('db', function () {
+            $config = new ConfigIni(CONFIG_PATH . 'application.ini');
+            $database['host'] = $config->database->host;
+            $database['username'] = $config->database->username;
+            if ($config->database->password) $database['password'] = $config->database->password;
+            $database['dbname'] = $config->database->dbname;
+            return new DbAdapter($database);
         });
 
         $this->setDI($di);

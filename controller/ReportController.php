@@ -9,7 +9,12 @@ class ReportController extends Controller {
     }
     
     public function postAction() {
-        error_log(print_r($this->request->getPost(), true));
+        $form = $this->request->getPost();
+        $record = new Record();
+        $record->name = $form['name'];
+        $record->state = $form['state'];
+        $record->output = $form['output'];
+        $record->type = $form['type'];
         echo 'post';
     }
 

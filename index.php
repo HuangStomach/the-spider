@@ -14,9 +14,9 @@ class Server {
         ]);
         $this->server->on('request', [$this, 'request']);
         $this->server->on('workerStart', [$this, 'workerStart']);
-        $this->server->on('finish', [$this, 'finish']);
 
 		define('APP_PATH', dirname(__FILE__) . '/' );
+        define('CONFIG_PATH', dirname(__FILE__) . '/config/' );
     }
 
     public function request ($req, $res) {
@@ -53,11 +53,6 @@ class Server {
 
         $server->spider = new Spider();
         $server->spider->init();
-    }
-
-    public function finish ($server, $task, $data) {
-        // echo print_r($server, true);
-        // echo print_r($data, true);
     }
 
     public function run () {
