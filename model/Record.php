@@ -1,10 +1,8 @@
 <?php
-
 use Phalcon\Mvc\Model;
-use DateTime;
-use DateTimeZone;
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
-use Phalcon\Config\Adapter\Ini as ConfigIni;
 
 class Record extends Model {
     public $id;
@@ -14,19 +12,26 @@ class Record extends Model {
     public $type;
     public $time;
 
-    public function initialize()
-    {
-        $config = new ConfigIni(CONFIG_PATH . 'application.ini');
-        $this->addBehavior(new Timestampable([
-            "beforeCreate" => [
-                "field"  => "time",
-                "format" => function () {
-                    $datetime = new Datetime(
-                        new DateTimeZone($config->env->timezone)
-                    );
-                    return $datetime->format("Y-m-d H:i:s");
-                }
-            ]
-        ]));
+    public function initialize () {
+        
     }
+
+    public function validation () {
+        $validator = new Validation();
+
+        $validator->add('name', new PresenceOf([
+            'message' => '缺少hostname',
+        ]));
+
+        $validator->add('state', new PresenceOf([
+            'message' => '缺少httpstate',
+        ]));
+
+        return $this->validate($validator);
+    }
+
+    public function beforeCreate () {
+        $this->time = date('Y-m-d h:i:s', time());
+    }
+    
 }

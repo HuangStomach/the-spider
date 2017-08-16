@@ -1,4 +1,5 @@
 <?php
+use Phalcon\Config\Adapter\Ini as ConfigIni;
 
 class Server {
     protected $server;
@@ -17,6 +18,9 @@ class Server {
 
 		define('APP_PATH', dirname(__FILE__) . '/' );
         define('CONFIG_PATH', dirname(__FILE__) . '/config/' );
+
+        $config = new ConfigIni(CONFIG_PATH . 'application.ini');
+        date_default_timezone_set($config->env->timezone);
     }
 
     public function request ($req, $res) {

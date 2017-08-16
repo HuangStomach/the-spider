@@ -4,6 +4,6 @@ CREATE TABLE `record` (
     `state`     varchar(100)         NOT NULL,
     `output`    varchar(500)                 ,
     `type`      varchar(100)                 ,
-    `time`      datetime             NOT NULL,
+    `time`      datetime                     ,
     PRIMARY KEY (`id`)
 );
