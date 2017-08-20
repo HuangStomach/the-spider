@@ -55,7 +55,7 @@ class Server {
     public function workerStart ($server, $work) {
         require_once(APP_PATH . 'lib/Spider.php');
 
-        $server->spider = new Spider();
+        $server->spider = new Spider($server);
         $server->spider->init();
     }
 

@@ -15,6 +15,12 @@ use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 
 class Spider extends BaseApplication {
 
+    protected $server;
+    
+    public function __construct ($server = null) {
+        $this->server = $server;
+    }
+
     public function init () {
         $this->services();
         $config = new ConfigIni(CONFIG_PATH . 'application.ini');
@@ -27,6 +33,8 @@ class Spider extends BaseApplication {
 
     protected function services () {
         $di = new DI();
+        
+        $di->set('server', $this->server);
 
         $di->set('router', function () {
             return new Router();

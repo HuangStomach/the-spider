@@ -10,7 +10,7 @@ class ReportController extends Controller {
     
     public function postAction() {
         $form = $this->request->getPost();
-        error_log(print_r($form, true));
+        
         $record = new Record();
         $record->name = $form['name'];
         $record->state = $form['state'];
