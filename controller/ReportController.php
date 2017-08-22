@@ -24,6 +24,7 @@ class ReportController extends Controller {
         }
 
         if ($record->save()) {
+            $this->server->task($record);
             echo 'saved';
         }
         else {

@@ -9,12 +9,15 @@ class Server {
         $this->server = new swoole_http_server('0.0.0.0', 9501);
         $this->server->set([
             'worker_num' => 4, // worker process num
+            'task_worker_num' => 4,
             'backlog' => 128, // listen backlog
             'max_request' => 50,
             'dispatch_mode' => 1
         ]);
         $this->server->on('request', [$this, 'request']);
         $this->server->on('workerStart', [$this, 'workerStart']);
+        $this->server->on('task', [$this, 'task']);
+        $this->server->on('finish', [$this, 'finish']);
 
 		define('APP_PATH', dirname(__FILE__) . '/' );
         define('CONFIG_PATH', dirname(__FILE__) . '/config/' );
@@ -57,6 +60,14 @@ class Server {
 
         $server->spider = new Spider($server);
         $server->spider->init();
+    }
+
+    public function task ($server, $task, $from, $data) {
+        $server->spider->broadcast($data);
+    }
+
+    public function finish ($server, $task, $data) {
+
     }
 
     public function run () {

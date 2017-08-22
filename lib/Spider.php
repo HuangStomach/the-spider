@@ -80,4 +80,8 @@ class Spider extends BaseApplication {
         $this->setDI($di);
     }
 
+    protected function broadcast () {
+        
+    }
+
 }
