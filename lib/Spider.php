@@ -25,10 +25,21 @@ class Spider extends BaseApplication {
         $this->services();
         $config = new ConfigIni(CONFIG_PATH . 'application.ini');
         $loader = new Loader();
+        
         $loader->registerDirs([
             APP_PATH . $config->application->controller,
             APP_PATH . $config->application->model
-        ])->register();
+        ]);
+
+        $loader->registerNamespaces( [
+            'Task' => APP_PATH . 'task/',
+        ]);
+
+        $loader->registerFiles([
+            APP_PATH . 'lib/Logger.php',
+        ]);
+
+        $loader->register();
     }
 
     protected function services () {
@@ -80,8 +91,10 @@ class Spider extends BaseApplication {
         $this->setDI($di);
     }
 
-    protected function broadcast () {
-        
+    public function dispatch ($class, $action, $content) {
+        $class = "\Task\\{$class}";
+        $task = new $class();
+        $task->{$action}($content);
     }
 
 }

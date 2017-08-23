@@ -63,11 +63,13 @@ class Server {
     }
 
     public function task ($server, $task, $from, $data) {
-        $server->spider->broadcast($data);
+        $server->spider->dispatch($data['class'], $data['action'], $data['content']);
+        $server->finish('');
     }
 
     public function finish ($server, $task, $data) {
-
+        $logger = new \Logger('task');
+        $logger->notice("task[{$task}] is finished");
     }
 
     public function run () {

@@ -24,7 +24,11 @@ class ReportController extends Controller {
         }
 
         if ($record->save()) {
-            $this->server->task($record);
+            $this->server->task([
+                'class' => 'status',
+                'action' => 'broadcast',
+                'content' => $record
+            ]);
             echo 'saved';
         }
         else {
