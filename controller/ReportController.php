@@ -2,7 +2,7 @@
 
 use Phalcon\Mvc\Controller;
 
-class ReportController extends Controller {
+class RecordController extends Controller {
     
     public function getAction () {
         echo 'get';
@@ -13,6 +13,7 @@ class ReportController extends Controller {
         
         $record = new Record();
         $record->name = $form['name'];
+        $record->fqdn = $form['fqdn'];
         $record->state = $form['state'];
         $record->output = $form['output'];
         $record->type = $form['type'];
@@ -24,11 +25,14 @@ class ReportController extends Controller {
         }
 
         if ($record->save()) {
+            $record->setServer($form);
+
             $this->server->task([
                 'class' => 'status',
-                'action' => 'broadcast',
-                'content' => $record
+                'action' => 'http',
+                'content' => $record,
             ]);
+
             echo 'saved';
         }
         else {
