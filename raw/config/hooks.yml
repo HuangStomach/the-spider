@@ -1,0 +1,4 @@
+---
+record.host.after.save:
+- callback:\Gini\Model\Record\Host::afterSave
+...

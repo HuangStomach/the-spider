@@ -5,16 +5,25 @@ namespace Gini\ORM\Record;
 class Host extends \Gini\ORM\Object
 {
     public $site    = 'object:site';
-    public $state   = 'int';
-    public $ip      = 'string:100';
-    public $status  = 'string:100'; // 服务器的状态
-    public $free    = 'double'; // 磁盘剩余容量百分比
-    public $top     = 'double'; // 负载
-    // public $report;             // 我为什么声明了一个report字段
-    public $ctime  = 'datetime';
+    public $state   = 'string:50'; // 主机状态
+    public $attempt = 'int'; // 尝试次数
+    public $type    = 'string:50'; // ?
+    public $runtime = 'double'; // 检测所用时间
+    public $output  = 'string:*'; // 测试输出
+    public $perf    = 'string:*'; // 结果详细信息
+    public $last    = 'datetime'; // 上次测试的时间
+    public $ctime   = 'datetime';
 
-    protected static $db_index = [
-        'unique:ip, fqdn', 'name',
+    function save() {
+        if (!$this->ctime) $this->ctime = date('Y-m-d H:i:s');
+        return parent::save();
+    }
+
+    private const STATE_LEVEL = [
+        
     ];
 
+    function level() {
+        
+    }
 }
