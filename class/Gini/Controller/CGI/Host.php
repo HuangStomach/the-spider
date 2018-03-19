@@ -15,7 +15,7 @@ class Host extends Base\Rest
         $output = $form['hostoutput']; // 主机输出
         $perf = $form['hostperfdata']; // 插件返回的额外数据
 
-        $site = a('site')->ensure($fqdn, $address); // TODO: 是否对server的设置一定要在这里做? 能否放到异步任务做处理?
+        $site = \Gini\Model\Site::ensure($fqdn, $address); // TODO: 是否对server的设置一定要在这里做? 能否放到异步任务做处理?
         $record = a('record/host');
         $record->site = $site;
         $record->state = $state;
@@ -29,7 +29,7 @@ class Host extends Base\Rest
 
         if ($record->id) {
             // 异步处理任务 发送HTTP的广播以及记录
-            $data = ['trigger' => 'status', $record];
+            $data = ['trigger' => 'record.host.after.save', $record];
             $this->env['swoole']->task($data);
         }
         else {

@@ -1,7 +1,7 @@
 <?php
-class Server {
+class Server 
+{
     protected $server;
-    
     
     public function __construct ($host, $port) {
         $this->server = new swoole_http_server($host, $port);

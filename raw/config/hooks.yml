@@ -1,4 +1,7 @@
 ---
 record.host.after.save:
 - callback:\Gini\Model\Record\Host::afterSave
+
+service.post.check_http_lims:
+- callback:\Gini\Model\Record\Http::structure
 ...
