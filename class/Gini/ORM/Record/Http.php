@@ -21,7 +21,7 @@ class Http extends \Gini\ORM\Object
         return parent::save();
     }
 
-    private const STATE_LEVEL = [
+    const STATE_LEVEL = [
         
     ];
 

@@ -21,9 +21,7 @@ class Ntp extends \Gini\ORM\Object
         return parent::save();
     }
 
-    private const STATE_LEVEL = [
-        
-    ];
+    const STATE_LEVEL = 1;
 
     function level() {
         

@@ -1,8 +1,14 @@
 {
+  "id": "the-spider",
   "name": "The Spider",
   "description": "App description...",
   "version": "0.1.0",
   "dependencies": {
     "gini": "*"
+  },
+  "composer": {
+    "require": {
+        "webonyx/graphql-php": "^0.11.5"
+    }
   }
 }

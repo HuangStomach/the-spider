@@ -4,4 +4,7 @@ record.host.after.save:
 
 service.post.check_http_lims:
 - callback:\Gini\Model\Record\Http::structure
+
+graphql.queryType.fields:
+- callback:\Gini\Model\Ex::queryType
 ...
