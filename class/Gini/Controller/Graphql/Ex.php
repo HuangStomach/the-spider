@@ -1,13 +1,13 @@
 <?php
 
-namespace Gini\Model;
+namespace Gini\Controller\Graphql;
 
 use \GraphQL\Type\Definition\Type;
 
 class Ex
 {
     // 确保site存在
-    static function queryType($e, $fields) {
+    public function query($fields) {
         $fields['echo'] = [
             'type' => Type::string(),
             'args' => [
