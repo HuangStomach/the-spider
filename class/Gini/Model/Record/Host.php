@@ -30,6 +30,13 @@ class Host
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param [type] $e
+     * @param [type] $server
+     * @return void
+     */
     public static function hook ($e, $server) {
         foreach ($server->table as $row) {
             $server->push($row['fd'], 'boardcast'); // 消息广播
