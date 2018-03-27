@@ -11,7 +11,7 @@ class Host
      * @param [\Gini\ORM\Record\Host] $record
      * @return void
      */
-    function afterSave ($e, $record) {
+    public static function afterSave ($e, $record) {
         if (!$record->id) return false;
         $site = $record->site;
         if (!$site->id) return false;
@@ -27,6 +27,12 @@ class Host
         $site->status = $record->level();
         if ($site->save()) {
             // do sth
+        }
+    }
+
+    public static function hook ($e, $server) {
+        foreach ($server->table as $row) {
+            $server->push($row['fd'], 'boardcast'); // 消息广播
         }
     }
 }

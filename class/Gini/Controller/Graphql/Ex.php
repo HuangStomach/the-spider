@@ -7,7 +7,7 @@ use \GraphQL\Type\Definition\Type;
 class Ex
 {
     // 确保site存在
-    public function query($fields) {
+    public function query($env, $fields) {
         $fields['echo'] = [
             'type' => Type::string(),
             'args' => [
@@ -17,5 +17,8 @@ class Ex
                 return $root['prefix'] . $args['message'];
             }
         ];
+
+        $data = ['trigger' => 'sth.hook'];
+        $env['swoole']->task($data);
     }
 }

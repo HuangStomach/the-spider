@@ -1,10 +1,12 @@
 <?php
+
 class Server 
 {
     protected $server;
+    protected $websocket;
     
     public function __construct($host, $port) {
-        $this->server = new swoole_http_server($host, $port);
+        $this->server = new swoole_websocket_server($host, $port);
         $this->server->set([
             'daemonize' => 0,
             'worker_num' => 8, // worker process num
@@ -16,9 +18,32 @@ class Server
             'group' => 'www-data'
         ]);
         $this->server->on('request', [$this, 'request']);
-        $this->server->on('workerStart', [$this, 'workerStart']);
+        $this->server->on('workerStart', [$this, 'work']);
         $this->server->on('task', [$this, 'task']);
         $this->server->on('finish', [$this, 'finish']);
+
+        // websocket 托管内容
+        $this->server->on('open', [$this, 'open']);
+        $this->server->on('message', [$this, 'message']);
+        $this->server->on('close', [$this, 'close']);
+
+        $table = new swoole_table(1024);
+        $table->column('fd', swoole_table::TYPE_INT);
+        $table->create();
+
+        $this->server->table = $table;
+    }
+
+    /**
+     * 客户端连接
+     *
+     * @param [swoole_server] $server
+     * @param [swoole_http_request] $req
+     * @return void
+     */
+    public function open($server, $req) {
+        $server->table->set($req->fd, ['fd' => $req->fd]);//获取客户端id插入table
+        echo "server: handshake success with fd{$request->fd}\n";
     }
     
     /**
@@ -50,7 +75,19 @@ class Server
         $res->end(J($content));
     }
 
-    public function workerStart($server, $work) {
+    /**
+     * 接收来自websocket的消息
+     *
+     * @param [swoole_server] $server
+     * @param [swoole_websocket_frame] $frame 客户端发来的数据帧信息
+     * @return void
+     */
+    public function message($server, $frame) {
+        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
+        $server->push($frame->fd, "this is server");
+    }
+
+    public function work($server, $work) {
         // 我只是不想输出那个模板html
         ob_start();
         require "/usr/local/share/gini/lib/cgi.php";
@@ -69,6 +106,7 @@ class Server
     public function task($server, $task, $from, $data) {
         $event = $data['trigger'];
         unset($data['trigger']);
+        array_unshift($data, $server);
         $result = \Gini\Event::trigger($event, ...$data);
         $server->finish($result);
     }
@@ -84,6 +122,18 @@ class Server
     public function finish($server, $task, $data) {
         // $logger = new \Logger('task');
         // $logger->notice("task[{$task}] is finished");
+    }
+
+    /**
+     * 当客户端关闭时的回调函数
+     *
+     * @param [swoole_server] $server
+     * @param [int] $fd 连接的文件描述符
+     * @return void
+     */
+    public function close($server, $fd) {
+        $server->table->del($fd);
+        echo "client {$fd} closed\n";
     }
 
     public function run() {

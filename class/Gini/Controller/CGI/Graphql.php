@@ -41,7 +41,7 @@ class Graphql extends \Gini\Controller\CGI
                         }
                         
                         if (is_callable($callback)) {
-                            call_user_func_array($callback, [$fields]);
+                            call_user_func_array($callback, [$this->env, $fields]);
                         }
                     }
                 }
