@@ -33,7 +33,7 @@ class Host
 
         if ($site->save() && $refresh) {
             // 当报警level出现变化时 进行广播
-            if (count($server->table)) foreach ($server->table as $row) {
+            if ($server->count()) foreach ($server->table as $row) {
                 $server->push($row['fd'], 'boardcast'); // 等待具体广播内容
             }
         }
