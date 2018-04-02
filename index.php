@@ -104,11 +104,12 @@ class Server
      * @return void
      */
     public function task($server, $task, $from, $data) {
-        $event = $data['trigger'];
+        /* $event = $data['trigger'];
         unset($data['trigger']);
         array_unshift($data, $server);
         $result = \Gini\Event::trigger($event, ...$data);
-        $server->finish($result);
+        $server->finish($result); */
+        $server->finish(true);
     }
 
     /**

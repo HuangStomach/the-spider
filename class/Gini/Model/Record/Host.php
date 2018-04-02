@@ -11,7 +11,7 @@ class Host
      * @param [\Gini\ORM\Record\Host] $record
      * @return void
      */
-    public static function afterSave ($e, $record) {
+    public static function afterSave ($e, $server, $record) {
         if (!$record->id) return false;
         $site = $record->site;
         if (!$site->id) return false;
@@ -21,12 +21,21 @@ class Host
          * 记录创建时间早于监控客户端最后更新时间时
          * 不做广播
          */
+        $last = those('record/host')->whose('site')->is($site)
+            ->orderBy('last', 'desc')->current()->last;
+        if (strtotime($last) < strtotime($site->update)) return;
         
-        if (strtotime($record->ctime) < strtotime($site->update)) return;
-        
-        $site->status = $record->level();
-        if ($site->save()) {
-            // do sth
+        $refresh = $site->level != $record->level() ; // 记录旧level
+        $site->status = $record->state;
+        if ($refresh) $site->level = $record->level();
+        $site->active = true;
+        $site->update = $last;
+
+        if ($site->save() && $refresh) {
+            // 当报警level出现变化时 进行广播
+            if (count($server->table)) foreach ($server->table as $row) {
+                $server->push($row['fd'], 'boardcast'); // 等待具体广播内容
+            }
         }
     }
 

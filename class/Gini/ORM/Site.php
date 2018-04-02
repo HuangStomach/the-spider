@@ -16,9 +16,9 @@ class Site extends \Gini\ORM\Object
     public $update  = 'datetime';
 
     protected static $db_index = [
-        'unique:ip, fqdn', 'name',
+        'unique:address, fqdn', 'name',
         'status', 'free', 'top',
-        'level'
+        'level', 'active'
     ];
 
     const LEVEL_SLEEP = 0;
@@ -28,14 +28,15 @@ class Site extends \Gini\ORM\Object
     const LEVEL_WARN = 40;
     const LEVEL_ERROR = 50;
     const LEVEL_FATAL = 60;
+
     // 严重等级 永远取最严重(最大)的等级来处理
-    public static $statuses = [
-        self::LEVEL_SLEEP => '待平台审批',
-        self::LEVEL_DIM => '待专家论证',
-        self::LEVEL_NORMAL => '待院所审批',
-        self::LEVEL_INFO => '待财务预算审批',
-        self::LEVEL_WARN => '待财务处审批',
-        self::LEVEL_ERROR => '待校级审批',
-        self::LEVEL_FATAL => '待设备处审批',
+    public static $levels = [
+        self::LEVEL_SLEEP => '休眠',
+        self::LEVEL_DIM => '待机',
+        self::LEVEL_NORMAL => '正常',
+        self::LEVEL_INFO => '信息',
+        self::LEVEL_WARN => '警告',
+        self::LEVEL_ERROR => '错误',
+        self::LEVEL_FATAL => 'GG',
     ];
 }
