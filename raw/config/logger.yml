@@ -1,0 +1,8 @@
+---
+host:
+  Spider:
+    level: warning
+http:
+  Spider:
+    level: warning
+...

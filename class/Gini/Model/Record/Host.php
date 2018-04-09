@@ -25,10 +25,9 @@ class Host
             ->orderBy('last', 'desc')->current()->last;
         if (strtotime($last) < strtotime($site->update)) return;
         
-        $refresh = $site->level != $record->level() ; // 记录旧level
+        $refresh = $site->level != $record->level() ; // TODO: 应该记录每种插件的level 综合考虑去更新站点的报警等级 脑瓜子都大了
         $site->status = $record->state;
         if ($refresh) $site->level = $record->level();
-        $site->active = true;
         $site->update = $last;
 
         if ($site->save() && $refresh) {

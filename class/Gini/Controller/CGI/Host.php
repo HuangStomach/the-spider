@@ -1,6 +1,8 @@
 <?php
 namespace Gini\Controller\CGI;
 
+use \Gini\CGI\Response;
+
 class Host extends Base\Rest
 {
     public function postDefault () {
@@ -15,7 +17,14 @@ class Host extends Base\Rest
         $output = $form['hostoutput']; // 主机输出
         $perf = $form['hostperfdata']; // 插件返回的额外数据
 
+        $res = false;
         $site = \Gini\Model\Site::ensure($fqdn, $address); // TODO: 是否对server的设置一定要在这里做? 能否放到异步任务做处理?
+        if (!$site->id) {
+            $content = "FQDN[{$fqdn}]服务器对象无法生成";
+            \Gini\Logger::of('host')->alert($content);
+            goto output;
+        }
+
         $record = a('record/host');
         $record->site = $site;
         $record->state = $state;
@@ -29,13 +38,17 @@ class Host extends Base\Rest
 
         if ($record->id) {
             // 异步处理任务 发送HTTP的广播以及记录
+            $res = true;
             $data = ['trigger' => 'record.host.after.save', $record];
             $this->env['swoole']->task($data);
         }
         else {
             // 日志记录有误 也应该进行某些记录操作 来进行日志记录有误标志
+            $content = "FQDN[{$fqdn}]发送的数据无法保存成功";
+            \Gini\Logger::of('host')->alert($content);
         }
 
-        return \Gini\IoC::construct('\Gini\CGI\Response\Json', true);
+        output:
+        return new Response\Json($res);
     }
 }
