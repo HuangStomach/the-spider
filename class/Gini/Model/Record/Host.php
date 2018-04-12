@@ -24,10 +24,16 @@ class Host
         $last = those('record/host')->whose('site')->is($site)
             ->orderBy('last', 'desc')->current()->last;
         if (strtotime($last) < strtotime($site->update)) return;
+
+        // 更新各个插件的报警情况
+        $siteLevel = a('site/level')->whose('site')->is($site);
+        $refresh = $siteLevel->host != $record->level();
+        if ($refresh) $siteLevel->host = $record->level();
+        $siteLevel->save();
         
-        $refresh = $site->level != $record->level() ; // TODO: 应该记录每种插件的level 综合考虑去更新站点的报警等级 脑瓜子都大了
+        // 然后再去更新站点的情况
+        $site->level = $site->level();
         $site->status = $record->state;
-        if ($refresh) $site->level = $record->level();
         $site->update = $last;
 
         if ($site->save() && $refresh) {

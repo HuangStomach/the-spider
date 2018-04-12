@@ -2,7 +2,9 @@
 
 namespace Gini\ORM\Record;
 
-class Host extends \Gini\ORM\Object
+use \Gini\ORM\Site;
+
+class Host extends Object
 {
     public $site = 'object:site';
     public $state = 'string:50'; // 主机状态

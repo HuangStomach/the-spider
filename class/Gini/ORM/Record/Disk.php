@@ -2,9 +2,7 @@
 
 namespace Gini\ORM\Record;
 
-use \Gini\ORM\Site;
-
-class Disk extends \Gini\ORM\Object
+class Disk extends Object
 {
     public $site = 'object:site';
     public $state = 'string:50'; // 主机状态
