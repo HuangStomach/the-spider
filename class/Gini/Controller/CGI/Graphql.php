@@ -1,10 +1,11 @@
 <?php
 namespace Gini\Controller\CGI;
 
+use \GraphQL\Type\Definition\ResolveInfo;
 use \GraphQL\Type\Definition\ObjectType;
 use \GraphQL\Type\Schema;
 
-class Graphql extends \Gini\Controller\CGI
+class GraphQL extends \Gini\Controller\CGI
 {
     public function __index () {
         if ($_SERVER['CONTENT_TYPE'] != 'application/graphql'
@@ -25,11 +26,11 @@ class Graphql extends \Gini\Controller\CGI
         
         try {
             $fields = new \ArrayIterator();
-            $dir = CLASS_DIR . '/Gini/Controller/Graphql';
+            $dir = CLASS_DIR . '/Gini/Controller/GraphQL';
             \Gini\File::eachFilesIn($dir, function ($file) use ($fields) {
                 if (preg_match('/^(.+)\.php$/', $file, $parts)) {
                     $class = trim(strtolower($parts[1]), '/');
-                    $class = '\Gini\Controller\Graphql\\' . strtr($class, '-', '_');
+                    $class = '\Gini\Controller\GraphQL\\' . strtr($class, '-', '_');
 
                     if (class_exists($class)) {
                         $o = \Gini\IoC::construct($class);

@@ -63,7 +63,7 @@ class Server
     public function request($req, $res) {
         $header = $req->header;
         $_SERVER = array_merge($_SERVER, $req->server);
-        
+
         // TODO: 传入res对象使后续可以对res对象进行操作
         $uri = trim($_SERVER['request_uri'], '/');
         $content = \Gini\CGI::request($uri, [
@@ -76,10 +76,14 @@ class Server
             'swoole' => $this->server, // swoole_server 对象
             'raw' => $req->rawContent(),
         ])->execute();
-        $result->output();
+
+        // 防止php://output过多挤压supervisor.log
+        ob_start();
+        $content->output();
+        ob_end_clean();
 
         $res->status(http_response_code());
-        $res->end(J($result->content()));
+        $res->end(J($content->content()));
     }
 
     /**
@@ -109,7 +113,7 @@ class Server
         // TODO: content是否考虑进行后续操作? 没有保存成功记录日志? 但是controller里面其实有
         $uri = trim($_SERVER['request_uri'], '/');
         $content = \Gini\CGI::request($uri, [
-            'post' => $data['post'],
+            'post' => $data['data'],
             'route' => $uri,
             'method' => 'POST',
             'swoole' => $server, // swoole_server对象
@@ -172,8 +176,10 @@ class Server
 
 $params = getopt('', [
     'host:',
-    'tcp-port:'
+    'tcp-port:',
+    'udp-port:'
 ]);
+
 $host = array_key_exists('host', $params) ? $params['host'] : '127.0.0.1';
 $tcpPort = array_key_exists('tcp-port', $params) ? $params['tcp-port'] : 3000;
 $udpPort = array_key_exists('udp-port', $params) ? $params['udp-port'] : 0;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gini\Controller\Graphql;
+namespace Gini\Controller\GraphQL;
 
 use \GraphQL\Type\Definition\Type;
 
@@ -21,4 +21,5 @@ class Ex
         $data = ['trigger' => 'sth.hook'];
         $env['swoole']->task($data);
     }
+
 }
