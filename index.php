@@ -66,7 +66,7 @@ class Server
 
         // TODO: 传入res对象使后续可以对res对象进行操作
         $uri = trim($_SERVER['request_uri'], '/');
-        $content = \Gini\CGI::request($uri, [
+        $result = \Gini\CGI::request($uri, [
             'header' => $header,
             'get' => $req->get,
             'post' => $req->post,
@@ -79,11 +79,11 @@ class Server
 
         // 防止php://output过多挤压supervisor.log
         ob_start();
-        $content->output();
+        $result->output();
         ob_end_clean();
 
         $res->status(http_response_code());
-        $res->end(J($content->content()));
+        $res->end(J($result->content()));
     }
 
     /**
