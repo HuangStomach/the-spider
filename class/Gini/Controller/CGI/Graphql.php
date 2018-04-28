@@ -7,7 +7,7 @@ use \GraphQL\Type\Schema;
 
 class GraphQL extends \Gini\Controller\CGI
 {
-    public function __index () {
+    public function __index() {
         if ($_SERVER['CONTENT_TYPE'] != 'application/graphql'
         && $this->env['header']['content-type'] != 'application/graphql') {
             $output = [

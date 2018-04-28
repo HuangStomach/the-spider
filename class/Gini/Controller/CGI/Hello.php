@@ -1,9 +1,9 @@
 <?php
 namespace Gini\Controller\CGI;
 
-class Hello extends Base\Rest
+class Hello extends \Gini\Controller\CGI
 {
-    public function getDefault ($ref = 0) {
+    public function get() {
         $response = ['hello' => 'world'];
         return \Gini\IoC::construct('\Gini\CGI\Response\Json', $response);
     }
