@@ -10,7 +10,7 @@ class Http extends \Gini\Controller\CGI\Base
         
         if (!$http->id) {
             $code = 404;
-            $response = '没有找到对应的送样信息';
+            $response = '没有找到对应的信息';
             goto output;
         }
         $response = [

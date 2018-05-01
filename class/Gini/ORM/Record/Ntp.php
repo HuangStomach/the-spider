@@ -2,7 +2,7 @@
 
 namespace Gini\ORM\Record;
 
-class Ntp extends Object
+class Ntp extends \Gini\ORM\Object
 {
     public $site = 'object:site';
     public $state = 'string:50'; // 主机状态

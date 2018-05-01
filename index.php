@@ -102,17 +102,17 @@ class Server
      * 将请求进行分发 符合Gini框架要求
      *
      * @param [swoole_server] $server
-     * @param [string] $data 收到的数据内容，可能是文本或者二进制内容
+     * @param [string] $raw 收到的数据内容，可能是文本或者二进制内容
      * @param [array] $client客户端信息包括address/port/server_socket 3项数据
      * @return void
      */
-    public function packet($server, $data, $client) {
+    public function packet($server, $raw, $client) {
         // 该处目前只做接受nagios请求的处理
-        $data; // TODO: data得处理一下 订一个协议
+        $data = @json_decode($raw, true);
+        if (!$data['data']) return;
         
         // TODO: content是否考虑进行后续操作? 没有保存成功记录日志? 但是controller里面其实有
-        $uri = trim($_SERVER['request_uri'], '/');
-        $content = \Gini\CGI::request($uri, [
+        $content = \Gini\CGI::request($data['uri'], [
             'post' => $data['data'],
             'route' => $uri,
             'method' => 'POST',

@@ -3,7 +3,4 @@ record.host.after.save:
 - callback:\Gini\Model\Record\Host::afterSave
 sth.hook:
 - callback:\Gini\Model\Record\Host::hook
-
-service.post.check_http_lims:
-- callback:\Gini\Model\Record\Http::structure
 ...

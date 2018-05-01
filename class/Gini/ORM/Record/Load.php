@@ -2,7 +2,7 @@
 
 namespace Gini\ORM\Record;
 
-class Load extends Object
+class Load extends \Gini\ORM\Object
 {
     public $site = 'object:site';
     public $state = 'string:50'; // 主机状态
