@@ -3,7 +3,7 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Http extends \Gini\Controller\CGI\Base
+class Http extends \Gini\Controller\CGI\Restful
 {
     public function get($id = 0) {
         $http = a('record/http', $id);
@@ -13,20 +13,7 @@ class Http extends \Gini\Controller\CGI\Base
             $response = '没有找到对应的信息';
             goto output;
         }
-        $response = [
-            'id' => $http->id,
-            'site' => $http->site->id,
-            'state' => $http->state,
-            'attempt' => $http->attempt,
-            'type' => $http->type,
-            'runtime' => $http->runtime,
-            'delay' => $http->delay,
-            'output' => $http->output,
-            'perf' => $http->perf,
-            'content' => $http->content,
-            'last' => $http->last,
-            'ctime' => $http->ctime,
-        ];
+        $response = $http->format();
 
         output:
         return new Response\JSON($response, $code);
@@ -35,7 +22,7 @@ class Http extends \Gini\Controller\CGI\Base
     public function fetch() {
         $form = $this->form('get');
 
-        $http = a('record/http');
+        $https = those('record/http');
 
         if ($form['site']) {
             $site = a('site', $form['site']);
@@ -44,45 +31,26 @@ class Http extends \Gini\Controller\CGI\Base
                 $response = '没有找到对应的站点';
                 goto output;
             }
-            $http->whose('site')->is($site);
+            $https->whose('site')->is($site);
         }
 
-        if ($form['state']) $http->whose('state')->is($form['state']);
-        if ($form['attempt']) {
-            $attempt = $form['attempt'];
-            if (is_array($attempt)) $this->range($http, 'attempt', $attempt);
-            else $http->whose('attempt')->is($attempt);
+        // 对可以通用的字段进行统配查询
+        foreach (['state', 'type', 'runtime', 'delay', 'ctime'] as $key) {
+            $this->query($https, $key);
         }
-        /* if ($form['status']) $http->whose('status')->contains($form['status']);
-        if ($form['active']) $http->whose('active')->is($form['active']);
-        if ($form['sortby'] && $form['order']) $http->orderBy((string)$form['sortby'], (string)$form['order']); */
+        
+        if ($form['sortby'] && $form['order']) {
+            $https->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
         
         // 成对出现 limit之前再取totalCount
-        $response['total'] = $http->totalCount();
-        if ($form['limit']) {
-            list($start, $per) = $form['limit'];
-            $http->limit($start, $per);
-        }
-        else {
-            $http->limit(0, 20);
-        }
+        $response['total'] = $https->totalCount();
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $https->limit(min(0, $start), max($per, 100));
 
         $response['data'] = [];
-        if ($sites->totalCount()) foreach ($sites as $site) {
-            $response['data'][] = [
-                'id' => $http->id,
-                'site' => $http->site->id,
-                'state' => $http->state,
-                'attempt' => $http->attempt,
-                'type' => $http->type,
-                'runtime' => $http->runtime,
-                'delay' => $http->delay,
-                'output' => $http->output,
-                'perf' => $http->perf,
-                'content' => $http->content,
-                'last' => $http->last,
-                'ctime' => $http->ctime,
-            ];
+        if ($https->totalCount()) foreach ($https as $http) {
+            $response['data'][] = $http->format();
         }
 
         output:

@@ -3,8 +3,16 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Host extends \Gini\Controller\CGI
+class Host extends \Gini\Controller\CGI\Restful
 {
+    public function get() {
+
+    }
+
+    public function fetch() {
+
+    }
+
     public function post() {
         $form = $this->form('post');
         $last = $form['lasthostcheck'];
@@ -50,13 +58,5 @@ class Host extends \Gini\Controller\CGI
 
         output:
         return new Response\Json($res);
-    }
-
-    public function get() {
-
-    }
-
-    public function fetch() {
-
     }
 }

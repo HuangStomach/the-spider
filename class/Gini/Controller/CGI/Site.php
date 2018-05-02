@@ -3,7 +3,7 @@ namespace Gini\Controller\CGI;
 
 use \Gini\CGI\Response;
 
-class Site extends \Gini\Controller\CGI
+class Site extends \Gini\Controller\CGI\Restful
 {
     public function get($id = 0) {
         $site = a('site', $id);
@@ -14,18 +14,7 @@ class Site extends \Gini\Controller\CGI
             goto output;
         }
 
-        $response = [
-            'id' => $site->id,
-            'name' => $site->name,
-            'fqdn' => $site->fqdn,
-            'address' => $site->address,
-            'status' => $site->status,
-            'free' => $site->free,
-            'top' => $site->top,
-            'level' => $site->level,
-            'active' => $site->active,
-            'update' => $site->update,
-        ];
+        $response = $site->format();
 
         output:
         return new Response\JSON($response, $code);
@@ -38,34 +27,24 @@ class Site extends \Gini\Controller\CGI
         if ($form['name']) $sites->whose('name')->contains($form['name']);
         if ($form['fqdn']) $sites->whose('fqdn')->contains($form['fqdn']);
         if ($form['address']) $sites->whose('address')->contains($form['address']);
-        if ($form['status']) $sites->whose('status')->is($form['status']);
-        if ($form['active']) $sites->whose('active')->is($form['active']);
-        if ($form['sortby'] && $form['order']) $sites->orderBy((string)$form['sortby'], (string)$form['order']);
+
+        // 对可以通用的字段进行统配查询
+        foreach (['status', 'active'] as $key) {
+            $this->query($sites, $key);
+        }
+        
+        if ($form['sortby'] && $form['order']) {
+            $sites->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
         
         // 成对出现 limit之前再取totalCount
         $response['total'] = $sites->totalCount();
-        if ($form['limit']) {
-            list($start, $per) = $form['limit'];
-            $sites->limit($start, $per);
-        }
-        else {
-            $sites->limit(0, 20);
-        }
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $sites->limit(min(0, $start), max($per, 100));
 
         $response['data'] = [];
         if ($sites->totalCount()) foreach ($sites as $site) {
-            $response['data'][] = [
-                'id' => $site->id,
-                'name' => $site->name,
-                'fqdn' => $site->fqdn,
-                'address' => $site->address,
-                'status' => $site->status,
-                'free' => $site->free,
-                'top' => $site->top,
-                'level' => $site->level,
-                'active' => $site->active,
-                'update' => $site->update,
-            ];
+            $response['data'][] = $site->format();
         }
 
         return new Response\JSON($response, $code);

@@ -3,7 +3,7 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Ntp extends \Gini\Controller\CGI
+class Ntp extends \Gini\Controller\CGI\Restful
 {
     public function post() {
         $form = $this->form('post');

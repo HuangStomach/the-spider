@@ -41,9 +41,24 @@ class Site extends Object
     ];
 
     public function level() {
-        $siteLevel = a('site/level')->whose('site')->is($site);
+        $siteLevel = a('site/level')->whose('site')->is($this);
         // TODO: 这里就不动态了 能不能动态取呢？
         return max($siteLevel->disk, $siteLevel->host, $siteLevel->http,
             $siteLevel->load, $siteLevel->ntp);
+    }
+
+    public function format() {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'fqdn' => $this->fqdn,
+            'address' => $this->address,
+            'status' => $this->status,
+            'free' => $this->free,
+            'top' => $this->top,
+            'level' => $this->level,
+            'active' => $this->active,
+            'update' => $this->update,
+        ];
     }
 }

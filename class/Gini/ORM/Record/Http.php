@@ -24,4 +24,21 @@ class Http extends \Gini\ORM\Object
     function level() {
         
     }
+
+    function format() {
+        return [
+            'id' => $this->id,
+            'site' => $this->site->id,
+            'state' => $this->state,
+            'attempt' => $this->attempt,
+            'type' => $this->type,
+            'runtime' => $this->runtime,
+            'delay' => $this->delay,
+            'output' => $this->output,
+            'perf' => $this->perf,
+            'content' => $this->content,
+            'last' => $this->last,
+            'ctime' => $this->ctime
+        ];
+    }
 }

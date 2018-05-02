@@ -3,7 +3,7 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Disk extends \Gini\Controller\CGI
+class Disk extends \Gini\Controller\CGI\Restful
 {
     public function post() {
         $form = $this->form('post');
