@@ -1,6 +1,6 @@
 <?php
 
-namespace Gini\Controller\CGI\Base;
+namespace Gini\Controller\CGI;
 
 class Base extends \Gini\Controller\REST {
 

@@ -31,7 +31,7 @@ class Host extends \Gini\Controller\CGI
         $record->attempt = $attempt;
         $record->type = $type;
         $record->runtime = $runtime;
-        $record->last = $last;
+        $record->last = date('Y-m-d H:i:s', $last);
         $record->output = $output;
         $record->perf = $perf;
         $record->save();

@@ -5,7 +5,7 @@ namespace Gini\Model;
 class Site
 {
     // 确保site存在
-    function ensure ($fqdn, $address = null, $name = null) {
+    static function ensure ($fqdn, $address = null, $name = null) {
         $site = a('site')->whose('fqdn')->is($fqdn);
         if ($site->id) return $site;
 

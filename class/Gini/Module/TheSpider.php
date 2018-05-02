@@ -45,7 +45,7 @@ class TheSpider
                 ->post('service/http', 'Service\\Http@post')
                 ->post('service/load', 'Service\\Load@post')
                 ->post('service/ntp', 'Service\\Ntp@post');
-        }, ['classPrefix' => '\\Gini\\Controller\\']);
+        }, ['classPrefix' => '\\Gini\\Controller\\CGI\\']);
     }
 }
 

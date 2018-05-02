@@ -119,7 +119,7 @@ class Http extends \Gini\Controller\CGI\Base
         $record->type = $type;
         $record->runtime = $runtime;
         $record->delay = $delay;
-        $record->last = $last;
+        $record->last = date('Y-m-d H:i:s', $last);
         $record->output = $output;
         $record->perf = $perf;
         $record->content = $content;
