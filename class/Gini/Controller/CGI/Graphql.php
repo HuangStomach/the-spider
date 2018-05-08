@@ -27,33 +27,26 @@ class GraphQL extends \Gini\Controller\CGI
         try {
             $fields = new \ArrayIterator();
 
-            /* if (isset($GLOBALS['gini.class_map'])) {
-                array_walk($GLOBALS['gini.class_map'], function ($info, $name) use ($fields) {
-                    
-                });
-            } */
-            
-            // TODO: 走class_map 解耦优化 方便进行单元测试等
-            \Gini\File::eachFilesIn($dir, function ($file) use ($fields) {
-                if (preg_match('/^(.+)\.php$/', $file, $parts)) {
-                    $class = trim(strtolower($parts[1]), '/');
-                    $class = '\Gini\Controller\GraphQL\\' . strtr($class, '-', '_');
+            if (isset($GLOBALS['gini.class_map'])) {
+                array_walk($GLOBALS['gini.class_map'], function ($path, $class, $fields) {
+                    $pos = strpos($class, 'gini/controller/graphql/'); // 只匹配graphql命名空间下的类
+                    if ($pos === false) return false;
 
-                    if (class_exists($class)) {
-                        $o = \Gini\IoC::construct($class);
-                        $o->app = \Gini\Core::app();
-                        if (method_exists($class, 'query')) {
-                            $callback = [$o, 'query'];
-                        } elseif (function_exists($class . '\\query')) {
-                            $callback = $class . '\\query';
-                        }
-                        
-                        if (is_callable($callback)) {
-                            call_user_func_array($callback, [$this->env, $fields]);
-                        }
+                    $class = str_replace('/', '\\', $class);
+                    $o = \Gini\IoC::construct($class);
+                    $o->app = \Gini\Core::app();
+                    if (method_exists($class, 'query')) {
+                        $callback = [$o, 'query'];
+                    } elseif (function_exists($class . '\\query')) {
+                        $callback = $class . '\\query';
                     }
-                }
-            });
+                    
+                    if (is_callable($callback)) {
+                        call_user_func_array($callback, [$this->env, $fields]);
+                    }
+                }, $fields);
+                // 需要将$fields引用传递 在内部做资源注入
+            }
             
             $queryType = new ObjectType([
                 'name' => 'Query',
