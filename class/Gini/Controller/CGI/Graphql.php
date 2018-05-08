@@ -26,7 +26,14 @@ class GraphQL extends \Gini\Controller\CGI
         
         try {
             $fields = new \ArrayIterator();
-            $dir = CLASS_DIR . '/Gini/Controller/GraphQL';
+
+            /* if (isset($GLOBALS['gini.class_map'])) {
+                array_walk($GLOBALS['gini.class_map'], function ($info, $name) use ($fields) {
+                    
+                });
+            } */
+            
+            // TODO: 走class_map 解耦优化 方便进行单元测试等
             \Gini\File::eachFilesIn($dir, function ($file) use ($fields) {
                 if (preg_match('/^(.+)\.php$/', $file, $parts)) {
                     $class = trim(strtolower($parts[1]), '/');
