@@ -40,7 +40,7 @@ class Site extends \Gini\Controller\CGI\Restful
         // 成对出现 limit之前再取totalCount
         $response['total'] = $sites->totalCount();
         list($start, $per) = $form['limit'] ? : [0, 20];
-        $sites->limit(min(0, $start), max($per, 100));
+        $sites->limit(max(0, $start), min($per, 100));
 
         $response['data'] = [];
         if ($sites->totalCount()) foreach ($sites as $site) {

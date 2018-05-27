@@ -46,7 +46,7 @@ class Http extends \Gini\Controller\CGI\Restful
         // 成对出现 limit之前再取totalCount
         $response['total'] = $https->totalCount();
         list($start, $per) = $form['limit'] ? : [0, 20];
-        $https->limit(min(0, $start), max($per, 100));
+        $https->limit(max(0, $start), min($per, 100));
 
         $response['data'] = [];
         if ($https->totalCount()) foreach ($https as $http) {
