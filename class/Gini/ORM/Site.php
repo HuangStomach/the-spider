@@ -7,7 +7,7 @@ class Site extends Object
     public $name = 'string:250';
     public $lab = 'string:250';
     public $site = 'string:50';
-    public $fqdn = 'string:500';
+    public $fqdn = 'string:250';
     public $address = 'string:250';
     public $path = 'string:100';
     public $status = 'string:100'; // 服务器的状态
@@ -20,7 +20,7 @@ class Site extends Object
 
     protected static $db_index = [
         'unique:address, fqdn', 'name',
-        'status', 'free', 'top',
+        'lab', 'status', 'free', 'top',
         'level', 'active'
     ];
 
