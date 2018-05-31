@@ -73,7 +73,7 @@ class Http extends \Gini\Controller\CGI\Restful
         $content = $form['longserviceoutput']; // 插件返回全文
 
         $res = false;
-        $site = \Gini\Model\Site::ensure($fqdn, $address); // TODO: 是否对server的设置一定要在这里做? 能否放到异步任务做处理?
+        $site = \Gini\Model\Site::ensure($form); // TODO: 是否对server的设置一定要在这里做? 能否放到异步任务做处理?
         if (!$site->id) {
             $content = "FQDN[{$fqdn}]服务器对象无法生成";
             \Gini\Logger::of('http')->alert($content);

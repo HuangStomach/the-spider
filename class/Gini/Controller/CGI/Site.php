@@ -25,6 +25,7 @@ class Site extends \Gini\Controller\CGI\Restful
 
         $sites = those('site');
         if ($form['name']) $sites->whose('name')->contains($form['name']);
+        if ($form['lab']) $site->whose('lab')->is($form['lab']);
         if ($form['fqdn']) $sites->whose('fqdn')->contains($form['fqdn']);
         if ($form['address']) $sites->whose('address')->contains($form['address']);
 
