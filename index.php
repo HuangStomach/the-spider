@@ -83,6 +83,7 @@ class Server
         ob_end_clean();
 
         $res->status(http_response_code());
+        $res->header('Access-Control-Allow-Origin', '*');
         $res->end(J($result->content()));
     }
 
