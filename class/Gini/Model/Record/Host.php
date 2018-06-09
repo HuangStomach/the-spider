@@ -13,6 +13,7 @@ class Host
      */
     public static function afterSave ($e, $server, $record) {
         if (!$record->id) return false;
+        unset($record->server); // 无奈之举 好像是swoole的BUG
         $site = $record->site;
         if (!$site->id) return false;
 
@@ -27,6 +28,7 @@ class Host
 
         // 更新各个插件的报警情况
         $siteLevel = a('site/level')->whose('site')->is($site);
+        $siteLevel->site = $site;
         $refresh = $siteLevel->host != $record->level();
         if ($refresh) $siteLevel->host = $record->level();
         $siteLevel->save();
