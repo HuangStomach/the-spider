@@ -7,7 +7,6 @@ class Disk extends \Gini\Controller\CGI\Restful
 {
     public function post() {
         $form = $this->form('post');
-        $service = $form['servicedesc'];
         $last = $form['lastservicecheck'];
         $fqdn = $form['hostname'];
         $address = $form['hostaddress'];

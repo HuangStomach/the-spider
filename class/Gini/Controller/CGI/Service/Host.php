@@ -47,7 +47,7 @@ class Host extends \Gini\Controller\CGI\Restful
         if ($record->id) {
             // 异步处理任务 发送HTTP的广播以及记录
             $res = true;
-            $data = ['trigger' => 'record.host.after.save', $record];
+            $data = ['trigger' => 'record.host.after.save', $record, $record->site->id];
             $this->env['swoole']->task($data);
         }
         else {

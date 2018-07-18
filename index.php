@@ -110,12 +110,16 @@ class Server
     public function packet($server, $raw, $client) {
         // 该处目前只做接受nagios请求的处理
         $data = @json_decode($raw, true);
-        if (!$data['data']) return;
-        
+        if (!$data['servicedesc']) return;
+
+        $key = $data['servicedesc'];
+        $router = \Gini\Config::get('router')[$key];
+        if (!$router) return;
+
         // TODO: content是否考虑进行后续操作? 没有保存成功记录日志? 但是controller里面其实有
-        $content = \Gini\CGI::request($data['uri'], [
-            'post' => $data['data'],
-            'route' => $uri,
+        $content = \Gini\CGI::request($router, [
+            'post' => $data,
+            'route' => $router,
             'method' => 'POST',
             'swoole' => $server, // swoole_server对象
         ])->execute();

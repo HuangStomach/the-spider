@@ -1,0 +1,9 @@
+---
+check_ping: service/host
+check_load: service/load
+check_ntp: service/ntp
+check_disk: service/disk
+# service
+check_http_lims: service/http
+check_http_api: service/http
+...

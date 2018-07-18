@@ -36,7 +36,7 @@ class Restful extends \Gini\Controller\REST {
     protected function filter(\Gini\Those $objects, $key, $array) {
         $op = current($array);
         if (!array_key_exists($op, $this->$operators)) return;
-        $operator = $operators[$op];
+        $operator = $this->$operators[$op];
 
         switch ($op) {
             case 'bt':

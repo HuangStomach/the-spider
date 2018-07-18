@@ -3,8 +3,7 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Http extends \Gini\Controller\CGI\Restful
-{
+class Http extends \Gini\Controller\CGI\Restful {
     public function get($id = 0) {
         $http = a('record/http', $id);
         
@@ -82,6 +81,7 @@ class Http extends \Gini\Controller\CGI\Restful
 
         $record = a('record/http');
         $record->site = $site;
+        $record->service = $service;
         $record->state = $state;
         $record->attempt = $attempt;
         $record->type = $type;

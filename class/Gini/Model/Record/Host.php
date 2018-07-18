@@ -11,10 +11,9 @@ class Host
      * @param [\Gini\ORM\Record\Host] $record
      * @return void
      */
-    public static function afterSave ($e, $server, $record) {
+    public static function afterSave ($e, $server, $record, $siteId) {
         if (!$record->id) return false;
-        unset($record->server); // 无奈之举 好像是swoole的BUG
-        $site = $record->site;
+        $site = a('site', $siteId);
         if (!$site->id) return false;
 
         /**
