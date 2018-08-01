@@ -4,7 +4,8 @@
   "description": "App description...",
   "version": "0.1.1",
   "dependencies": {
-    "gini": "*"
+    "gini": "*",
+    "yiqikong-swoole": "*"
   },
   "composer": {
     "require": {

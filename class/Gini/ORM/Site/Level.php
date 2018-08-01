@@ -15,4 +15,9 @@ class Level extends \Gini\ORM\Object
     protected static $db_index = [
         'unique:site'
     ];
+
+    function save() {
+        $this->update = date('Y-m-d H:i:s');
+        return parent::save();
+    }
 }

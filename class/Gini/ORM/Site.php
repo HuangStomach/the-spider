@@ -2,14 +2,12 @@
 
 namespace Gini\ORM;
 
-class Site extends Object
-{
+class Site extends Object {
     public $name = 'string:250';
     public $lab = 'string:250';
     public $site = 'string:50';
     public $fqdn = 'string:250';
     public $address = 'string:250';
-    public $path = 'string:100';
     public $status = 'string:100'; // 服务器的状态
     public $free = 'double'; // 磁盘剩余容量百分比
     public $top = 'double'; // 负载

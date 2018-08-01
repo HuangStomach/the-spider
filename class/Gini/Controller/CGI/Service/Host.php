@@ -15,7 +15,7 @@ class Host extends \Gini\Controller\CGI\Restful
 
     public function post() {
         $form = $this->form('post');
-        $last = $form['lastservicecheck'];
+        $last = $form['lasthostcheck'];
         $fqdn = $form['hostname'];
         $address = $form['hostaddress'];
         $state = $form['hoststate']; // 主机状态

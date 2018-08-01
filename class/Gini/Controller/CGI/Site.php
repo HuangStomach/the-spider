@@ -3,14 +3,13 @@ namespace Gini\Controller\CGI;
 
 use \Gini\CGI\Response;
 
-class Site extends \Gini\Controller\CGI\Restful
-{
+class Site extends Restful {
     public function get($id = 0) {
         $site = a('site', $id);
         
         if (!$site->id) {
             $code = 404;
-            $response = '没有找到对应的送样信息';
+            $response = '没有找到对应的服务器信息';
             goto output;
         }
 
@@ -48,6 +47,29 @@ class Site extends \Gini\Controller\CGI\Restful
             $response['data'][] = $site->format();
         }
 
+        return new Response\JSON($response, $code);
+    }
+
+    public function put($id = 0) {
+        $site = a('site', $id);
+        
+        if (!$site->id) {
+            $code = 404;
+            $response = '没有找到对应的服务器信息';
+            goto output;
+        }
+
+        $site->name = $form['name'];
+        $site->lab = $form['lab'];
+        $site->site = $form['site'];
+        $site->active = $form['active'];
+        if ($site->save()) $response = $site->format();
+        else {
+            $code = 500;
+            $response = '服务器信息更新失败';
+        }
+
+        output:
         return new Response\JSON($response, $code);
     }
 }
