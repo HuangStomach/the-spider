@@ -58,7 +58,7 @@ class Site extends Restful {
             $response = '没有找到对应的服务器信息';
             goto output;
         }
-
+        $form = $this->form('post');
         $site->name = $form['name'];
         $site->lab = $form['lab'];
         $site->site = $form['site'];

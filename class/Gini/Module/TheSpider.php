@@ -38,6 +38,7 @@ class TheSpider
                 ->post('graphql', 'GraphQL@__index')
                 ->get('site', 'Site@fetch')
                 ->get('site/{id}', 'Site@get')
+                ->put('site/{id}', 'Site@put')
                 ->post('service/disk', 'Service\\Disk@post')
                 ->post('service/host', 'Service\\Host@post')
                 ->get('service/http', 'Service\\Http@get')
