@@ -60,8 +60,8 @@ class Site extends Object {
             'status' => $this->status,
             'free' => $this->free,
             'top' => $this->top,
-            'level' => $this->level,
-            'active' => $this->active,
+            'level' => (int)$this->level,
+            'active' => (int)$this->active,
             'update' => $this->update,
         ];
     }
