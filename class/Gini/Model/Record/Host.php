@@ -2,8 +2,7 @@
 
 namespace Gini\Model\Record;
 
-class Host
-{
+class Host {
     /**
      * host监控记录保存触发修改状态和广播事件
      *
@@ -40,19 +39,6 @@ class Host
             if ($server->table->count()) foreach ($server->table as $row) {
                 $server->push($row['fd'], 'boardcast'); // 等待具体广播内容
             }
-        }
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param [type] $e
-     * @param [type] $server
-     * @return void
-     */
-    public static function hook ($e, $server) {
-        foreach ($server->table as $row) {
-            $server->push($row['fd'], 'boardcast'); // 消息广播
         }
     }
 }

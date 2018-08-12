@@ -31,4 +31,19 @@ class Host extends \Gini\ORM\Object
                 return Site::LEVEL_DIM;
         }
     }
+
+    function format() {
+        return [
+            'id' => $this->id,
+            'site' => $this->site->id,
+            'state' => $this->state,
+            'attempt' => $this->attempt,
+            'type' => $this->type,
+            'runtime' => $this->runtime,
+            'output' => $this->output,
+            'perf' => $this->perf,
+            'last' => $this->last,
+            'ctime' => $this->ctime
+        ];
+    }
 }

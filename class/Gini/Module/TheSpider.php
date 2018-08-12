@@ -39,12 +39,20 @@ class TheSpider
                 ->get('site', 'Site@fetch')
                 ->get('site/{id}', 'Site@get')
                 ->put('site/{id}', 'Site@put')
-                ->post('service/disk', 'Service\\Disk@post')
+                ->get('service/host', 'Service\\Host@get')
+                ->get('service/host/{id}', 'Service\\Host@fetch')
                 ->post('service/host', 'Service\\Host@post')
                 ->get('service/http', 'Service\\Http@get')
                 ->get('service/http/{id}', 'Service\\Http@fetch')
                 ->post('service/http', 'Service\\Http@post')
+                ->get('service/disk', 'Service\\Disk@get')
+                ->get('service/disk/{id}', 'Service\\Disk@fetch')
+                ->post('service/disk', 'Service\\Disk@post')
+                ->get('service/load', 'Service\\Load@get')
+                ->get('service/load/{id}', 'Service\\Load@fetch')
                 ->post('service/load', 'Service\\Load@post')
+                ->get('service/ntp', 'Service\\Ntp@get')
+                ->get('service/ntp/{id}', 'Service\\Ntp@fetch')
                 ->post('service/ntp', 'Service\\Ntp@post');
         }, ['classPrefix' => '\\Gini\\Controller\\CGI\\']);
     }

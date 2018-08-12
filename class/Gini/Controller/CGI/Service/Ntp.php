@@ -3,8 +3,59 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Ntp extends \Gini\Controller\CGI\Restful
-{
+class Ntp extends \Gini\Controller\CGI\Restful {
+    public function get($id = 0) {
+        $ntp = a('record/ntp', $id);
+        
+        if (!$ntp->id) {
+            $code = 404;
+            $response = '没有找到对应的信息';
+            goto output;
+        }
+        $response = $ntp->format();
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+
+    public function fetch() {
+        $form = $this->form('get');
+
+        $ntps = those('record/ntp');
+
+        if ($form['site']) {
+            $site = a('site', $form['site']);
+            if (!$site->id) {
+                $code = 404;
+                $response = '没有找到对应的站点';
+                goto output;
+            }
+            $ntps->whose('site')->is($site);
+        }
+
+        // 对可以通用的字段进行统配查询
+        foreach (['state', 'type', 'runtime', 'delay', 'ctime'] as $key) {
+            $this->query($ntps, $key);
+        }
+        
+        if ($form['sortby'] && $form['order']) {
+            $ntps->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
+        
+        // 成对出现 limit之前再取totalCount
+        $response['total'] = $ntps->totalCount();
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $ntps->limit(max(0, $start), min($per, 100));
+
+        $response['data'] = [];
+        if ($ntps->totalCount()) foreach ($ntps as $ntp) {
+            $response['data'][] = $ntp->format();
+        }
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+    
     public function post() {
         $form = $this->form('post');
         $last = $form['lastservicecheck'];

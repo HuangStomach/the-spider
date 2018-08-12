@@ -3,8 +3,59 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Disk extends \Gini\Controller\CGI\Restful
-{
+class Disk extends \Gini\Controller\CGI\Restful {
+    public function get($id = 0) {
+        $disk = a('record/disk', $id);
+        
+        if (!$disk->id) {
+            $code = 404;
+            $response = '没有找到对应的信息';
+            goto output;
+        }
+        $response = $disk->format();
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+
+    public function fetch() {
+        $form = $this->form('get');
+
+        $disks = those('record/disk');
+
+        if ($form['site']) {
+            $site = a('site', $form['site']);
+            if (!$site->id) {
+                $code = 404;
+                $response = '没有找到对应的站点';
+                goto output;
+            }
+            $disks->whose('site')->is($site);
+        }
+
+        // 对可以通用的字段进行统配查询
+        foreach (['state', 'type', 'runtime', 'delay', 'ctime'] as $key) {
+            $this->query($disks, $key);
+        }
+        
+        if ($form['sortby'] && $form['order']) {
+            $disks->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
+        
+        // 成对出现 limit之前再取totalCount
+        $response['total'] = $disks->totalCount();
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $disks->limit(max(0, $start), min($per, 100));
+
+        $response['data'] = [];
+        if ($disks->totalCount()) foreach ($disks as $disk) {
+            $response['data'][] = $disk->format();
+        }
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+
     public function post() {
         $form = $this->form('post');
         $last = $form['lastservicecheck'];

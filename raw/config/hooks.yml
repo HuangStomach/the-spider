@@ -1,4 +1,12 @@
 ---
+record.disk.after.save:
+- callback:\Gini\Model\Record\Disk::afterSave
+record.http.after.save:
+- callback:\Gini\Model\Record\Http::afterSave
 record.host.after.save:
 - callback:\Gini\Model\Record\Host::afterSave
+record.load.after.save:
+- callback:\Gini\Model\Record\Load::afterSave
+record.ntp.after.save:
+- callback:\Gini\Model\Record\Ntp::afterSave
 ...

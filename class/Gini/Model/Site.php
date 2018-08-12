@@ -2,8 +2,7 @@
 
 namespace Gini\Model;
 
-class Site
-{
+class Site {
     // 确保site存在
     static function ensure($form) {
         $site = a('site')->whose('fqdn')->is($form['hostname']);

@@ -3,14 +3,57 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Host extends \Gini\Controller\CGI\Restful
-{
-    public function get() {
+class Host extends \Gini\Controller\CGI\Restful{
+    public function get($id = 0) {
+        $host = a('record/host', $id);
+        
+        if (!$host->id) {
+            $code = 404;
+            $response = '没有找到对应的信息';
+            goto output;
+        }
+        $response = $host->format();
 
+        output:
+        return new Response\JSON($response, $code);
     }
 
     public function fetch() {
+        $form = $this->form('get');
 
+        $hosts = those('record/host');
+
+        if ($form['site']) {
+            $site = a('site', $form['site']);
+            if (!$site->id) {
+                $code = 404;
+                $response = '没有找到对应的站点';
+                goto output;
+            }
+            $hosts->whose('site')->is($site);
+        }
+
+        // 对可以通用的字段进行统配查询
+        foreach (['state', 'type', 'runtime', 'ctime'] as $key) {
+            $this->query($hosts, $key);
+        }
+        
+        if ($form['sortby'] && $form['order']) {
+            $hosts->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
+        
+        // 成对出现 limit之前再取totalCount
+        $response['total'] = $hosts->totalCount();
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $hosts->limit(max(0, $start), min($per, 100));
+
+        $response['data'] = [];
+        if ($hosts->totalCount()) foreach ($hosts as $host) {
+            $response['data'][] = $host->format();
+        }
+
+        output:
+        return new Response\JSON($response, $code);
     }
 
     public function post() {

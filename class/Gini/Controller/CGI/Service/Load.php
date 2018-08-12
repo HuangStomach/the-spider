@@ -3,8 +3,59 @@ namespace Gini\Controller\CGI\Service;
 
 use \Gini\CGI\Response;
 
-class Load extends \Gini\Controller\CGI\Restful
-{
+class Load extends \Gini\Controller\CGI\Restful {
+    public function get($id = 0) {
+        $load = a('record/load', $id);
+        
+        if (!$load->id) {
+            $code = 404;
+            $response = '没有找到对应的信息';
+            goto output;
+        }
+        $response = $load->format();
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+
+    public function fetch() {
+        $form = $this->form('get');
+
+        $loads = those('record/load');
+
+        if ($form['site']) {
+            $site = a('site', $form['site']);
+            if (!$site->id) {
+                $code = 404;
+                $response = '没有找到对应的站点';
+                goto output;
+            }
+            $loads->whose('site')->is($site);
+        }
+
+        // 对可以通用的字段进行统配查询
+        foreach (['state', 'type', 'runtime', 'delay', 'ctime'] as $key) {
+            $this->query($loads, $key);
+        }
+        
+        if ($form['sortby'] && $form['order']) {
+            $loads->orderBy((string)$form['sortby'], (string)$form['order']);
+        }
+        
+        // 成对出现 limit之前再取totalCount
+        $response['total'] = $loads->totalCount();
+        list($start, $per) = $form['limit'] ? : [0, 20];
+        $loads->limit(max(0, $start), min($per, 100));
+
+        $response['data'] = [];
+        if ($loads->totalCount()) foreach ($loads as $load) {
+            $response['data'][] = $load->format();
+        }
+
+        output:
+        return new Response\JSON($response, $code);
+    }
+
     public function post() {
         $form = $this->form('post');
         $last = $form['lastservicecheck'];

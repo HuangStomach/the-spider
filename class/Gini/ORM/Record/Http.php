@@ -2,8 +2,7 @@
 
 namespace Gini\ORM\Record;
 
-class Http extends \Gini\ORM\Object
-{
+class Http extends \Gini\ORM\Object {
     public $site = 'object:site';
     public $service = 'string:250'; // 服务名称
     public $state = 'string:50'; // 主机状态
