@@ -62,11 +62,11 @@ class Server
      */
     public function request($req, $res) {
         // 跨域OPTIONS返回
+        $res->header('Access-Control-Allow-Origin', '*');
+        $res->header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, PATCH, OPTIONS');
+        $res->header('Access-Control-Allow-Headers', 'Authorization, User-Agent, Keep-Alive, Content-Type, X-Requested-With');
         if ($req->server['request_method'] == 'OPTIONS') {
             $res->status(http_response_code());
-            $res->header('Access-Control-Allow-Origin', '*');
-            $res->header('Access-Control-Allow-Methods', 'GET, POST, DELETE, PUT, PATCH, OPTIONS');
-            $res->header('Access-Control-Allow-Headers', 'Authorization, User-Agent, Keep-Alive, Content-Type, X-Requested-With');
             $res->end();
             return;
         }
